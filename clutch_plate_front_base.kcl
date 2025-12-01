@@ -1,0 +1,34 @@
+// Front Clutch Plate Base
+import clutch_plate_thickness, 
+  clutch_plate_outer_ring_r, 
+  clutch_plate_inner_ring_r from "constants.kcl"
+
+cutout_count=6
+outer_cutout_r=46mm
+inner_cutout_loop_r=44mm
+cutout_trim_per=.85
+cutout_angle=360deg /(cutout_count*2) * cutout_trim_per 
+
+cutout_single=startSketchOn(XY)
+|> startProfile(at = [0, -outer_cutout_r])
+|> tangentialArc(angle=cutout_angle, radius=outer_cutout_r)
+|> tangentialArc(angle=cutout_angle, radius=outer_cutout_r)
+|> tangentialArc(angle=180deg, radius=(outer_cutout_r-inner_cutout_loop_r)/2)
+|> tangentialArc(angle=-cutout_angle, radius=inner_cutout_loop_r)
+|> tangentialArc(angle=-cutout_angle, radius=inner_cutout_loop_r)
+|> tangentialArc(angle=180deg, radius=(outer_cutout_r-inner_cutout_loop_r)/2)
+|> close()
+
+cutout_pattern=cutout_single
+|> patternCircular2d(instances = cutout_count, center = [0, 0], rotateDuplicates=true)
+|> extrude(length = clutch_plate_thickness)
+
+//ring_r=50mm
+//ring_inner_r_empty=40mm
+
+ring=startSketchOn(XY)
+|> circle(center = [0, 0], diameter = clutch_plate_outer_ring_r*2)
+|> subtract2d(tool = circle(center = [0, 0], diameter = clutch_plate_inner_ring_r*2))
+|> extrude(length = clutch_plate_thickness)
+
+export clutch_plate_front_base = subtract(ring, tools=[cutout_pattern])

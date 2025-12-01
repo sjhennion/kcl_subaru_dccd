@@ -1,0 +1,16 @@
+import clutch_plate_outer_ring_r, clutch_plate_thickness from "constants.kcl"
+import clutch_plate_front_base from "clutch_plate_front_base.kcl"
+import drive_lug_ring_outer from "drive_lug_ring_outer.kcl"
+
+out_spline_drive_lug_ring = drive_lug_ring_outer(
+  lug_count = 30,
+  bottom_land_r = clutch_plate_outer_ring_r + 0.5mm,
+  lug_height = 5mm,
+  cutout_buffer = 1mm,
+  thickness = 1mm
+)
+
+export clutch_plate_front_outer = out_spline_drive_lug_ring + clutch_plate_front_base
+
+//outer_spline_ring=startSketchOn(XY)
+//|> 

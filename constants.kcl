@@ -1,0 +1,5 @@
+// Global project constants
+
+export clutch_plate_thickness=1mm
+export clutch_plate_outer_ring_r=50mm
+export clutch_plate_inner_ring_r=40mm

@@ -1,0 +1,16 @@
+import clutch_plate_outer_ring_r, clutch_plate_thickness, clutch_plate_inner_ring_r from "constants.kcl"
+import clutch_plate_front_base_filled from "clutch_plate_front_base_filled.kcl"
+import drive_lug_ring_filled from "drive_lug_ring_filled.kcl"
+
+lug_ring_bottom_land_r = clutch_plate_inner_ring_r - 5mm
+
+in_spline_drive_lug_ring = drive_lug_ring_filled(
+  lug_count = 50,
+  bottom_land_r = lug_ring_bottom_land_r,
+  lug_height = 1.5mm,
+  thickness = 1mm,
+  arc_deg_top = 4deg,
+  arc_deg_bottom = 6deg
+)
+
+export clutch_plate_front_inner = clutch_plate_front_base_filled - in_spline_drive_lug_ring

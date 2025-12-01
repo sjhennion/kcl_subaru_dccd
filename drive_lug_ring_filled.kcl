@@ -1,0 +1,38 @@
+export fn drive_lug_ring_filled(lug_count, bottom_land_r, lug_height, thickness, arc_deg_top, arc_deg_bottom) {
+  top_land_r = bottom_land_r + lug_height
+
+  //arc_deg_top = 6deg
+  //arc_deg_bottom = 8deg
+  arc_deg_gap = (360deg - (lug_count * arc_deg_bottom)) / lug_count
+  arc_deg_rise = (arc_deg_bottom - arc_deg_top) / 2.0
+  arc_deg_single = arc_deg_rise + arc_deg_top + arc_deg_rise + arc_deg_gap
+
+  assert(360, isEqualTo = arc_deg_single * lug_count)
+
+  drive_lug_ring_sketch = startSketchOn(XY)
+    |> startProfile(at = polar(angle = 0deg, length = bottom_land_r))
+    |> line(endAbsolute = polar(angle = arc_deg_rise, length = top_land_r))
+    |> line(endAbsolute = polar(angle = arc_deg_rise + arc_deg_top, length = top_land_r))
+    |> line(endAbsolute = polar(angle = arc_deg_rise * 2 + arc_deg_top, length = bottom_land_r))
+    |> line(endAbsolute = polar(angle = arc_deg_rise * 2 + arc_deg_top + arc_deg_gap, length = bottom_land_r))
+    |> patternCircular2d(
+         instances = lug_count,
+         center = [0, 0],
+         arcDegrees = 360deg,
+         rotateDuplicates = true,
+       )
+    |> close()
+    |> extrude(length = thickness)   
+
+  return drive_lug_ring_sketch
+}
+
+/*
+drive_lug_ring(
+  lug_count = 30,
+  bottom_land_r = 60mm,
+  lug_height = 3mm,
+  cutout_buffer = 1mm,
+  thickness = 1mm
+)
+*/
