@@ -1,6 +1,15 @@
 import clutch_plate_outer_ring_r, clutch_plate_thickness, clutch_plate_inner_ring_r from "constants.kcl"
-import clutch_plate_front_base_filled from "clutch_plate_front_base_filled.kcl"
-import drive_lug_ring_filled from "drive_lug_ring_filled.kcl"
+import clutch_plate_front_base_filled from "clutch_plate_front_base.kcl"
+import drive_lug_ring_filled from "drive_lug_ring.kcl"
+
+clutch_plate_front_base = clutch_plate_front_base_filled(
+  base_plate_r = clutch_plate_outer_ring_r,
+  thickness = clutch_plate_thickness,
+  radial_oil_groove_count = 6,
+  outer_oil_groove_r = 46mm,
+  inner_oil_groove_r = 44mm,
+  oil_groove_trim_per = .85,
+)
 
 lug_ring_bottom_land_r = clutch_plate_inner_ring_r - 5mm
 
@@ -13,4 +22,4 @@ in_spline_drive_lug_ring = drive_lug_ring_filled(
   arc_deg_bottom = 6deg
 )
 
-export clutch_plate_front_inner = clutch_plate_front_base_filled - in_spline_drive_lug_ring
+export clutch_plate_front_inner = clutch_plate_front_base - in_spline_drive_lug_ring

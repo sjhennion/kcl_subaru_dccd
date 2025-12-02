@@ -1,16 +1,25 @@
-import clutch_plate_outer_ring_r, clutch_plate_thickness from "constants.kcl"
-import clutch_plate_front_base from "clutch_plate_front_base.kcl"
-import drive_lug_ring_outer from "drive_lug_ring_outer.kcl"
+import clutch_plate_outer_ring_r, clutch_plate_inner_ring_r, clutch_plate_thickness from "constants.kcl"
+import clutch_plate_front_base_cutout from "clutch_plate_front_base.kcl"
+import drive_lug_ring_cutout from "drive_lug_ring.kcl"
 
-out_spline_drive_lug_ring = drive_lug_ring_outer(
+clutch_plate_front_base = clutch_plate_front_base_cutout(
+  base_plate_r = clutch_plate_outer_ring_r,
+  thickness = clutch_plate_thickness,
+  radial_oil_groove_count = 6,
+  outer_oil_groove_r = 46mm,
+  inner_oil_groove_r = 44mm,
+  oil_groove_trim_per = .85,
+  hole_r = clutch_plate_inner_ring_r
+)
+
+out_spline_drive_lug_ring = drive_lug_ring_cutout(
   lug_count = 30,
   bottom_land_r = clutch_plate_outer_ring_r + 0.5mm,
   lug_height = 5mm,
   cutout_buffer = 1mm,
-  thickness = 1mm
+  thickness = 1mm,
+  arc_deg_top = 6deg,
+  arc_deg_bottom = 8deg
 )
 
 export clutch_plate_front_outer = out_spline_drive_lug_ring + clutch_plate_front_base
-
-//outer_spline_ring=startSketchOn(XY)
-//|> 

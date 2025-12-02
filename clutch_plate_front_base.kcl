@@ -1,34 +1,48 @@
 // Front Clutch Plate Base
-import clutch_plate_thickness, 
-  clutch_plate_outer_ring_r, 
-  clutch_plate_inner_ring_r from "constants.kcl"
 
-cutout_count=6
-outer_cutout_r=46mm
-inner_cutout_loop_r=44mm
-cutout_trim_per=.85
-cutout_angle=360deg /(cutout_count*2) * cutout_trim_per 
 
-cutout_single=startSketchOn(XY)
-|> startProfile(at = [0, -outer_cutout_r])
-|> tangentialArc(angle=cutout_angle, radius=outer_cutout_r)
-|> tangentialArc(angle=cutout_angle, radius=outer_cutout_r)
-|> tangentialArc(angle=180deg, radius=(outer_cutout_r-inner_cutout_loop_r)/2)
-|> tangentialArc(angle=-cutout_angle, radius=inner_cutout_loop_r)
-|> tangentialArc(angle=-cutout_angle, radius=inner_cutout_loop_r)
-|> tangentialArc(angle=180deg, radius=(outer_cutout_r-inner_cutout_loop_r)/2)
-|> close()
+export fn clutch_plate_front_base_filled(base_plate_r, thickness, radial_oil_groove_count, outer_oil_groove_r, inner_oil_groove_r, oil_groove_trim_per) {
+  oil_groove_angle = 360deg / (radial_oil_groove_count * 2) * oil_groove_trim_per
 
-cutout_pattern=cutout_single
-|> patternCircular2d(instances = cutout_count, center = [0, 0], rotateDuplicates=true)
-|> extrude(length = clutch_plate_thickness)
+  oil_groove_single = startSketchOn(XY)
+    |> startProfile(at = [0, -outer_oil_groove_r])
+    |> tangentialArc(angle = oil_groove_angle, radius = outer_oil_groove_r)
+    |> tangentialArc(angle = oil_groove_angle, radius = outer_oil_groove_r)
+    |> tangentialArc(angle = 180deg, radius = (outer_oil_groove_r - inner_oil_groove_r) / 2)
+    |> tangentialArc(angle = -oil_groove_angle, radius = inner_oil_groove_r)
+    |> tangentialArc(angle = -oil_groove_angle, radius = inner_oil_groove_r)
+    |> tangentialArc(angle = 180deg, radius = (outer_oil_groove_r - inner_oil_groove_r) / 2)
+    |> close()
 
-//ring_r=50mm
-//ring_inner_r_empty=40mm
+  oil_grooves_pattern = oil_groove_single
+    |> patternCircular2d(instances = radial_oil_groove_count, center = [0, 0], rotateDuplicates = true)
+    |> extrude(length = thickness)
 
-ring=startSketchOn(XY)
-|> circle(center = [0, 0], diameter = clutch_plate_outer_ring_r*2)
-|> subtract2d(tool = circle(center = [0, 0], diameter = clutch_plate_inner_ring_r*2))
-|> extrude(length = clutch_plate_thickness)
+  ring = startSketchOn(XY)
+    |> circle(center = [0, 0], diameter = base_plate_r * 2)
+    |> extrude(length = thickness)
 
-export clutch_plate_front_base = subtract(ring, tools=[cutout_pattern])
+  clutch_plate_front_base_solid = subtract(ring, tools = [oil_grooves_pattern])
+
+  return clutch_plate_front_base_solid
+}
+
+export fn clutch_plate_front_base_cutout(base_plate_r, thickness, radial_oil_groove_count, outer_oil_groove_r, inner_oil_groove_r, oil_groove_trim_per, hole_r) {
+  clutch_plate_front_base = clutch_plate_front_base_filled(
+    base_plate_r,
+    thickness,
+    radial_oil_groove_count,
+    outer_oil_groove_r,
+    inner_oil_groove_r,
+    oil_groove_trim_per,
+  )
+
+  hole_cutout = startSketchOn(XY) 
+  |> circle(center = [0, 0], diameter = hole_r * 2)
+  |> extrude(length = thickness)
+
+  clutch_plate_front_base_cutout_solid = clutch_plate_front_base
+  |> subtract(tools = [hole_cutout])
+
+  return clutch_plate_front_base_cutout_solid
+}

@@ -1,8 +1,6 @@
 export fn drive_lug_ring_filled(lug_count, bottom_land_r, lug_height, thickness, arc_deg_top, arc_deg_bottom) {
   top_land_r = bottom_land_r + lug_height
 
-  //arc_deg_top = 6deg
-  //arc_deg_bottom = 8deg
   arc_deg_gap = (360deg - (lug_count * arc_deg_bottom)) / lug_count
   arc_deg_rise = (arc_deg_bottom - arc_deg_top) / 2.0
   arc_deg_single = arc_deg_rise + arc_deg_top + arc_deg_rise + arc_deg_gap
@@ -22,9 +20,28 @@ export fn drive_lug_ring_filled(lug_count, bottom_land_r, lug_height, thickness,
          rotateDuplicates = true,
        )
     |> close()
-    |> extrude(length = thickness)   
-
+    |> extrude(length = thickness)
+    
   return drive_lug_ring_sketch
+}
+
+export fn drive_lug_ring_cutout(lug_count, bottom_land_r, lug_height, cutout_buffer, thickness, arc_deg_top, arc_deg_bottom) {
+  drive_lug_ring_outer_sketch = drive_lug_ring_filled(
+    lug_count,
+    bottom_land_r,
+    lug_height,
+    thickness,
+    arc_deg_top,
+    arc_deg_bottom)
+
+  cutout = startSketchOn(XY)
+  |> circle(center = [0, 0], diameter = (bottom_land_r - cutout_buffer)*2)
+  |> extrude(length = thickness)
+
+  drive_lug_ring_outer_cutout_sketch = drive_lug_ring_outer_sketch
+  |> subtract(tools = [cutout])
+
+  return drive_lug_ring_outer_cutout_sketch
 }
 
 /*
