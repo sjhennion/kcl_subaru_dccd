@@ -1,0 +1,31 @@
+// This can be refactored by drawing the red hot chili peppers logo via a circular pattern and extruding
+
+export fn housing_planet_carrier_cutout(outer_r, width, height, depth) {
+  fn single_cutout(@angle) {
+    cutout = startSketchOn(XY)
+    |> startProfile(at = [-width/2, outer_r])
+    |> xLine(length = width)
+    |> yLine(length = -depth)
+    |> xLine(length = -width)
+    |> yLine(length = depth)
+    |> close()
+    |> extrude(length = height)
+    |> rotate(roll = 0, pitch = 0, yaw = angle)
+
+    return cutout
+  }
+
+  angles = [45, 90, 135, 180, 225, 270, 315, 360]
+  cutout_tools = map(angles, f = single_cutout)
+
+  return cutout_tools[0] +
+    cutout_tools[1] +
+    cutout_tools[2] +
+    cutout_tools[3] +
+    cutout_tools[4] +
+    cutout_tools[5] +
+    cutout_tools[6] +
+    cutout_tools[7]
+}
+
+//housing_planet_carrier_cutout(outer_r = 60mm, width = 10mm, height = 10mm, depth = 10mm)

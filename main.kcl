@@ -1,13 +1,21 @@
 import clutch_plate_front_outer from "clutch_plate_front_outer_spline.kcl"
 import clutch_plate_front_inner from "clutch_plate_front_inner_spline.kcl"
+import housing from "housing.kcl"
 
 space_dist = 60mm
 
+clutch_plate_front_outer_count = 4
+clutch_plate_front_inner_count = 4
+
 clutch_plate_front_outer 
 |> rotate(roll = 90, pitch = 0, yaw = 0)
-|> patternLinear3d(instances = 4, distance = space_dist, axis = [0, 1, 0])
+|> patternLinear3d(instances = clutch_plate_front_outer_count, distance = space_dist, axis = [0, 1, 0])
 
 clutch_plate_front_inner
 |> rotate(roll = 90, pitch = 0, yaw = 0)
 |> translate(x = 0, y = 0, z = space_dist/2.0)
-|> patternLinear3d(instances = 4, distance = space_dist, axis = [0, 1, 0])
+|> patternLinear3d(instances = clutch_plate_front_inner_count, distance = space_dist, axis = [0, 1, 0])
+
+housing
+|> rotate(roll = 90, pitch = 0, yaw = 0)
+|> translate(x = 0, y = 0, z = (space_dist * (clutch_plate_front_inner_count + clutch_plate_front_outer_count)/4))

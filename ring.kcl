@@ -1,0 +1,48 @@
+// Create a simple ring solid
+
+export fn ring(outer_r, inner_r, thickness) {
+  ring_solid = startSketchOn(XY)
+  |> circle(center = [0, 0], diameter = outer_r * 2)
+  |> extrude(length = thickness, 
+    tagStart = $ring_face_top,
+    tagEnd = $ring_face_bottom)
+  // Given the errors I saw before tweaking the depth, under the hood this eventually just becomes a subtraction, so
+  // is there a benefit to using a hole here over a regular circle subtraction?
+  |> hole::hole(face = ring_face_top,
+    cutAt = [0, 0],
+    holeBottom = hole::flat(),
+    // Double thickness here to placate the "don't match things perfectly" errors
+    holeBody = hole::blind(depth = thickness * 2, diameter = inner_r * 2),
+    holeType = hole::simple()
+    )
+  
+  return ring_solid
+}
+
+/*
+ring(outer_r = 60mm,
+  inner_r = 50mm,
+  thickness = 5mm)
+*/
+
+export fn lug_ring(outer_r, inner_r, outer_thickness, inner_thickness) {
+  diff_r = outer_r - inner_r
+  profile = startSketchOn(XY)
+  |> startProfile(at = [inner_r, 0])
+  |> yLine(length = inner_thickness/2)
+  |> line(endAbsolute = [outer_r, outer_thickness/2])
+  |> yLine(length = -outer_thickness)
+  |> line(endAbsolute = [inner_r, -inner_thickness/2])
+  |> close()
+  |> revolve(axis = Y)
+  |> rotate(roll = 90, pitch = 0, yaw = 0)
+  
+  return profile
+}
+
+/*
+lug_ring(outer_r = 60mm,
+  inner_r = 50mm,
+  outer_thickness = 5mm,
+  inner_thickness = 2mm)
+*/

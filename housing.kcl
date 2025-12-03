@@ -1,0 +1,59 @@
+import clutch_plate_outer_ring_r from "constants.kcl"
+import drive_lug_ring_2d from "drive_lug_ring.kcl"
+import ring, lug_ring from "ring.kcl"
+import housing_planet_carrier_cutout from "housing_planet_carrier_cutout.kcl"
+
+clutch_plate_to_housing_tolerance = 0.1mm
+clutch_plate_outer_drive_lug_height = 2mm
+clutch_plate_cutout_tolerance_gap = 0.5mm
+
+housing_wall_thickness = 5.0mm
+housing_inner_r = clutch_plate_outer_ring_r + 
+  clutch_plate_outer_drive_lug_height + 
+  clutch_plate_cutout_tolerance_gap +
+  clutch_plate_to_housing_tolerance
+housing_outer_r = housing_inner_r + housing_wall_thickness
+  
+housing_dia = (housing_inner_r + housing_wall_thickness) * 2
+housing_height = 150mm
+housing_drive_lug_cutout_depth = 125mm
+housing_upper_spline_smooth_depth = 30mm
+housing_outer_groove_outer_thickness = 5mm
+housing_outer_groove_inner_thickness = 2mm
+housing_outer_groove_height = housing_height - 25mm
+
+drive_lug_cutout_2d = drive_lug_ring_2d(
+  lug_count = 30,
+  bottom_land_r = clutch_plate_outer_ring_r + clutch_plate_cutout_tolerance_gap,
+  lug_height = clutch_plate_outer_drive_lug_height,
+  thickness = 1mm,
+  arc_deg_top = 6deg,
+  arc_deg_bottom = 8deg
+)
+
+drive_lug_cutout = drive_lug_cutout_2d
+|> extrude(length = housing_drive_lug_cutout_depth)
+
+upper_spline_smooth_cutout = startSketchOn(XY)
+|> circle(center = [0, 0], diameter = housing_inner_r * 2)
+|> extrude(length = housing_upper_spline_smooth_depth)
+
+outer_groove_cutout = lug_ring(outer_r = housing_outer_r * 1.01, 
+  inner_r = housing_outer_r * 0.99, 
+  outer_thickness = housing_outer_groove_outer_thickness,
+  inner_thickness = housing_outer_groove_inner_thickness)
+|> appearance(color = "#ff0000")
+|> translate(x = 0, y = housing_outer_groove_height, z = 0)
+
+planet_carrier_cutouts = housing_planet_carrier_cutout(outer_r = housing_outer_r * 1.05, width = 20mm, height = 10mm, depth = 20mm)
+|> translate(x = 0, y = 0, z = -2mm)
+
+export housing = startSketchOn(XY)
+|> circle(center = [0, 0], diameter = housing_dia)
+|> extrude(length = housing_height)
+|> subtract(tools = [planet_carrier_cutouts])
+|> subtract(tools = [drive_lug_cutout])
+|> subtract(tools = [upper_spline_smooth_cutout])
+|> subtract(tools = [outer_groove_cutout])
+
+
